@@ -1,4 +1,5 @@
 package com.example.enchere.controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +20,8 @@ import com.example.enchere.repository.AdminsRepository;
 import com.example.enchere.retour.ErrorRetour;
 import com.example.enchere.retour.SuccessRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/admin")
-
 public class AdminsController {
 
     @Autowired
@@ -31,29 +30,25 @@ public class AdminsController {
     @PostMapping("/authentification")
     public @ResponseBody Map<String, Object> login(@RequestBody Admins admins) throws Exception {
         Admins a = adminsRepository.login(admins.getEmail(), admins.getMotDePasse());
-        if( a == null ){
-            throw new RessourceException(new ErrorRetour("Compte innexistant",HttpStatus.NOT_FOUND.value()));
-        }
-        else{
+        if (a == null) {
+            throw new RessourceException(new ErrorRetour("Compte innexistant", HttpStatus.NOT_FOUND.value()));
+        } else {
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("data", new SuccessRetour("Vous êtes bien connectée "+a.getNom()));
+            data.put("data", new SuccessRetour("Vous êtes bien connectée " + a.getNom()));
             return data;
         }
     }
 
     @GetMapping("/deconnexion/{Nom}")
-    public @ResponseBody Map<String, Object> deconnexion(@PathVariable String Nom){
+    public @ResponseBody Map<String, Object> deconnexion(@PathVariable String Nom) {
         Admins a = adminsRepository.getNomAdmins(Nom);
-        if( a == null ){
-            throw new RessourceException(new ErrorRetour("Nom admin incorrect",HttpStatus.NOT_FOUND.value()));
-        }
-        else{
+        if (a == null) {
+            throw new RessourceException(new ErrorRetour("Nom admin incorrect", HttpStatus.NOT_FOUND.value()));
+        } else {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", new SuccessRetour("Déconnexion succès"));
             return data;
         }
     }
 
-    
-    
 }

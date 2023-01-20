@@ -18,10 +18,8 @@ import com.example.enchere.repository.AdminsRepository;
 import com.example.enchere.retour.ErrorRetour;
 import com.example.enchere.retour.SuccessRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/admins")
-
 public class AdminController {
 
     @Autowired
