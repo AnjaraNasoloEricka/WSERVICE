@@ -20,36 +20,35 @@ import com.example.enchere.modele.Commission;
 import com.example.enchere.repository.CommissionRepository;
 import com.example.enchere.retour.ErrorRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/commission")
 public class CommissionController {
-    
+
     @Autowired
     private CommissionRepository commissionRepository;
 
     @PostMapping("/insertion")
     public @ResponseBody Map<String, Object> login(@RequestBody Commission commission) throws Exception {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             commission.setDateCommission(Date.valueOf(LocalDate.now()));
             data.put("data", commissionRepository.save(commission));
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.NOT_FOUND.value()));
         }
     }
 
     @GetMapping("/liste")
     public @ResponseBody Map<String, Object> liste() throws Exception {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", commissionRepository.findAll());
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.NOT_FOUND.value()));
         }
     }
 }

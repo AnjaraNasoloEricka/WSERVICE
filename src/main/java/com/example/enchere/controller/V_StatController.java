@@ -17,7 +17,6 @@ import com.example.enchere.modele.V_Stat;
 import com.example.enchere.repository.V_StatRepository;
 import com.example.enchere.retour.ErrorRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/statistique")
 public class V_StatController {
@@ -26,20 +25,20 @@ public class V_StatController {
 
     @GetMapping
     public @ResponseBody Map<String, Object> getStat() {
-        try{
+        try {
 
             Map<String, Object> data = new HashMap<String, Object>();
             List<V_Stat> stat = v_StatRepository.findAll();
-            if(stat.size() > 0) {
+            if (stat.size() > 0) {
                 data.put("data", stat);
-            } else{
+            } else {
                 data.put("message", "Aucune enchère vendue");
             }
 
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }

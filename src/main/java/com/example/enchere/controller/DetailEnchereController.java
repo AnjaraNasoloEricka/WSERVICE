@@ -20,7 +20,6 @@ import com.example.enchere.repository.ImageEnchereRepository;
 import com.example.enchere.repository.V_EnchereRepository;
 import com.example.enchere.retour.ErrorRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/detailenchere")
 public class DetailEnchereController {
@@ -30,20 +29,20 @@ public class DetailEnchereController {
 
     @Autowired
     private ImageEnchereRepository imageEnchereRepository;
-    
+
     @GetMapping("{idenchere}")
-    public @ResponseBody Map<String, Object> getDetailEnchereById(@PathVariable int idenchere){
-        try{
+    public @ResponseBody Map<String, Object> getDetailEnchereById(@PathVariable int idenchere) {
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             V_Enchere enchere = v_enchereRepository.getEnchere(idenchere);
-            List <ImageEnchere> images = imageEnchereRepository.getAll(idenchere);
+            List<ImageEnchere> images = imageEnchereRepository.getAll(idenchere);
             data.put("enchere", enchere);
-            data.put("images",images);
+            data.put("images", images);
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
         }
     }
-    
+
 }

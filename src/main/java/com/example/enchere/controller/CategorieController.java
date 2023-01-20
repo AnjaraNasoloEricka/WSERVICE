@@ -22,43 +22,42 @@ import com.example.enchere.repository.CategorieRepository;
 import com.example.enchere.retour.ErrorRetour;
 import com.example.enchere.retour.SuccessRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/categorie")
 public class CategorieController {
-    
+
     @Autowired
     private CategorieRepository categorieRepository;
 
     @PostMapping("/insertion")
     public @ResponseBody Map<String, Object> insertion(@RequestBody Categorie categorie) throws Exception {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", categorieRepository.save(categorie));
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.NOT_FOUND.value()));
         }
     }
 
     @GetMapping("/liste")
     public @ResponseBody Map<String, Object> liste() throws Exception {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", categorieRepository.findAll());
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.NOT_FOUND.value()));
         }
     }
 
     @PutMapping("/updateCategorie")
     public @ResponseBody Map<String, Object> updateOffre(@RequestBody Categorie c) {
-        Categorie updateCategorie = categorieRepository.findById(c.getIdCategorie()).orElseThrow(() 
-            -> new RessourceException(new ErrorRetour("idCategorie : "+c.getIdCategorie()+" n'existe pas",HttpStatus.NO_CONTENT.value()))
-        );
+        Categorie updateCategorie = categorieRepository.findById(c.getIdCategorie()).orElseThrow(
+                () -> new RessourceException(new ErrorRetour("idCategorie : " + c.getIdCategorie() + " n'existe pas",
+                        HttpStatus.NO_CONTENT.value())));
         updateCategorie.setValeur(c.getValeur());
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("data", categorieRepository.save(updateCategorie));
@@ -66,19 +65,17 @@ public class CategorieController {
     }
 
     @DeleteMapping("{idCategorie}")
-    public @ResponseBody Map<String, Object> deleteOffre(@PathVariable int idCategorie)throws Exception{
-        
-        try{
-            Categorie categorie = categorieRepository.findById(idCategorie).orElseThrow(() 
-                -> new RessourceException(new ErrorRetour("idCategorie : "+idCategorie+" n'existe pas",HttpStatus.NOT_FOUND.value()))
-            );
+    public @ResponseBody Map<String, Object> deleteOffre(@PathVariable int idCategorie) throws Exception {
+
+        try {
+            Categorie categorie = categorieRepository.findById(idCategorie).orElseThrow(() -> new RessourceException(
+                    new ErrorRetour("idCategorie : " + idCategorie + " n'existe pas", HttpStatus.NOT_FOUND.value())));
             categorieRepository.delete(categorie);
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("data", new SuccessRetour(" l'idCategorie  "+idCategorie+" a été supprimé avec succès"));
+            data.put("data", new SuccessRetour(" l'idCategorie  " + idCategorie + " a été supprimé avec succès"));
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Error "+e.getMessage(),HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            throw new RessourceException(new ErrorRetour("Error " + e.getMessage(), HttpStatus.NOT_FOUND.value()));
         }
     }
 }

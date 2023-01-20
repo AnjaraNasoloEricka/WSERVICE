@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,11 +32,10 @@ import com.example.enchere.repository.TokenRepository;
 import com.example.enchere.repository.V_RechargementRepository;
 import com.example.enchere.retour.ErrorRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/rechargement")
 public class V_RechargementController {
-    
+
     @Autowired
     private V_RechargementRepository v_rechargementRepository;
 
@@ -53,48 +51,48 @@ public class V_RechargementController {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public void isTokenExipered(String tokenValues)throws Exception{
+    public void isTokenExipered(String tokenValues) throws Exception {
         Token token = tokenRepository.getToken(tokenValues);
         token.bearerToken(token);
     }
 
     @GetMapping("/listeNonValide")
     public @ResponseBody Map<String, Object> nonValides() {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             List<V_Rechargement> nonValide = v_rechargementRepository.nonValides();
-            if(nonValide.size() > 0) {
+            if (nonValide.size() > 0) {
                 data.put("data", nonValide);
             } else {
                 data.put("message", "Aucun rechargement non validé");
             }
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @GetMapping("/listeValide")
     public @ResponseBody Map<String, Object> valides() {
-        try{
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             List<V_Rechargement> valide = v_rechargementRepository.nonValides();
-            if(valide.size() > 0) {
+            if (valide.size() > 0) {
                 data.put("data", valide);
             } else {
                 data.put("message", "Aucun rechargement validé");
             }
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @PutMapping("validationRechargement")
     public @ResponseBody Map<String, Object> confirmeRechargement(@RequestParam("idRechargement") int idRechargement) {
-        try{
+        try {
             Rechargement rg = rechargementRepository.findById(idRechargement).get();
             Compte compte = compteRepository.findById(rg.getIdCompte()).get();
             double nouveauSolde = compte.getSolde() + rg.getMontant();
@@ -106,30 +104,27 @@ public class V_RechargementController {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", "Confirmation réussie, rechargement validé");
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Erreur de la confirmation",HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(new ErrorRetour("Erreur de la confirmation", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
-
     @PostMapping("/rechargement/{idUtilisateur}/{tokenValues}")
-    public @ResponseBody Map<String, Object> rechargement(@RequestBody Rechargement rechargement, @PathVariable int idUtilisateur, @PathVariable String tokenValues) throws Exception{
-        try{
+    public @ResponseBody Map<String, Object> rechargement(@RequestBody Rechargement rechargement,
+            @PathVariable int idUtilisateur, @PathVariable String tokenValues) throws Exception {
+        try {
             isTokenExipered(tokenValues);
             Compte compte = compteRepository.getCompte(idUtilisateur);
             rechargement.setIdCompte(compte.getIdCompte());
             rechargement.setDateRechargement(Date.valueOf(LocalDate.now()));
             Map<String, Object> data = new HashMap<String, Object>();
-            if( rechargement.getMontant() > 0 ){
+            if (rechargement.getMontant() > 0) {
                 data.put("data", rechargementRepository.save(rechargement));
-            }
-            else{
-                throw new RessourceException(new ErrorRetour("Montant Invalide",HttpStatus.BAD_REQUEST.value()));
+            } else {
+                throw new RessourceException(new ErrorRetour("Montant Invalide", HttpStatus.BAD_REQUEST.value()));
             }
             return data;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }

@@ -36,7 +36,6 @@ import com.example.enchere.repository.CommissionRepository;
 import com.example.enchere.retour.ErrorRetour;
 import com.example.enchere.retour.SuccessRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/encheres")
 public class EnchereController {
@@ -50,34 +49,32 @@ public class EnchereController {
     @Autowired
     private ImageEnchereRepository imageEnchereRepository;
 
-    
     @Autowired
     private EnchereRepository enchereRepository;
-    
+
     @Autowired
     private TokenRepository tokenRepository;
 
     @Autowired
     private CommissionRepository commissionRepository;
 
-
-    public void isTokenExipered(String tokenValues)throws Exception{
+    public void isTokenExipered(String tokenValues) throws Exception {
         Token token = tokenRepository.getToken(tokenValues);
         token.bearerToken(token);
     }
-    
+
     V_Enchere v = new V_Enchere();
 
-    Status [] status = {
-        new Status(1,"Non demarrer"),
-        new Status(2,"En Cours"),
-        new Status(3,"Termine")
+    Status[] status = {
+            new Status(1, "Non demarrer"),
+            new Status(2, "En Cours"),
+            new Status(3, "Termine")
     };
 
-
     @PostMapping("/insertionEnchere/{tokenValues}")
-    public @ResponseBody Map<String, Object> createEnchere(@RequestBody EnchereInsertion enchereInsertion, @PathVariable String tokenValues) throws Exception{
-        try{
+    public @ResponseBody Map<String, Object> createEnchere(@RequestBody EnchereInsertion enchereInsertion,
+            @PathVariable String tokenValues) throws Exception {
+        try {
             isTokenExipered(tokenValues);
             Commission c = commissionRepository.getCommission();
             Map<String, Object> data = new HashMap<String, Object>();
@@ -88,29 +85,27 @@ public class EnchereController {
             insertionImage(e, enchereInsertion.getImages());
             data.put("data", e);
             return data;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
-    
-    public void insertionImage(Enchere enchere, ImageEnchere [] images){
-        try{
-            for(int i=0; i<images.length; i++){
+
+    public void insertionImage(Enchere enchere, ImageEnchere[] images) {
+        try {
+            for (int i = 0; i < images.length; i++) {
                 images[i].setIdEnchere(enchere.getIdEnchere());
                 imageEnchereRepository.save(images[i]);
             }
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Insertion Image : "+e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Insertion Image : " + e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @PutMapping("modifier/{idEnchere}")
-    public @ResponseBody Map<String, Object> updateEnchere(@PathVariable int idEnchere,@RequestBody Enchere enchere) {
-        Enchere updateEnchere = enchereRepository.findById(idEnchere).orElseThrow(() 
-            -> new RessourceException(new ErrorRetour("idEnchere : "+idEnchere+" n'existe pas",HttpStatus.NO_CONTENT.value()))
-        );
+    public @ResponseBody Map<String, Object> updateEnchere(@PathVariable int idEnchere, @RequestBody Enchere enchere) {
+        Enchere updateEnchere = enchereRepository.findById(idEnchere).orElseThrow(() -> new RessourceException(
+                new ErrorRetour("idEnchere : " + idEnchere + " n'existe pas", HttpStatus.NO_CONTENT.value())));
         updateEnchere.setNom(enchere.getNom());
         updateEnchere.setDescriptions(enchere.getDescriptions());
         updateEnchere.setPrixEnchere(enchere.getPrixEnchere());
@@ -125,54 +120,51 @@ public class EnchereController {
     }
 
     @DeleteMapping("delete/{idEnchere}")
-    public @ResponseBody Map<String, Object> deleteEnchere(@PathVariable int idEnchere)throws Exception{
-        Enchere enchere = enchereRepository.findById(idEnchere).orElseThrow(() 
-            -> new RessourceException(new ErrorRetour("idEnchere : "+idEnchere+" n'existe pas",HttpStatus.NOT_FOUND.value()))
-        );
+    public @ResponseBody Map<String, Object> deleteEnchere(@PathVariable int idEnchere) throws Exception {
+        Enchere enchere = enchereRepository.findById(idEnchere).orElseThrow(() -> new RessourceException(
+                new ErrorRetour("idEnchere : " + idEnchere + " n'existe pas", HttpStatus.NOT_FOUND.value())));
         enchereRepository.delete(enchere);
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("data", new SuccessRetour(" l'idEnchere  "+idEnchere+" a été supprimé avec succès"));
+        data.put("data", new SuccessRetour(" l'idEnchere  " + idEnchere + " a été supprimé avec succès"));
         return data;
     }
 
     @PostMapping("/recherches")
-    public @ResponseBody Map<String, Object> recherches(@RequestBody Condition condition ){
-        try{
+    public @ResponseBody Map<String, Object> recherches(@RequestBody Condition condition) {
+        try {
             String c = condition.conditionRequete();
             Map<String, Object> data = new HashMap<String, Object>();
-            List <V_Enchere> liste = v.getAll(c);
+            List<V_Enchere> liste = v.getAll(c);
             data.put("data", liste);
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(new ErrorRetour(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @GetMapping("/historiques/{idEnchere}/{tokenValues}")
-    public @ResponseBody Map<String, Object> historiques(@PathVariable int idEnchere, @PathVariable String tokenValues)throws Exception{
-        try{
+    public @ResponseBody Map<String, Object> historiques(@PathVariable int idEnchere, @PathVariable String tokenValues)
+            throws Exception {
+        try {
             isTokenExipered(tokenValues);
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("data",historiqueEnchereRepository.getHistoriques(idEnchere));
+            data.put("data", historiqueEnchereRepository.getHistoriques(idEnchere));
             return data;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
 
     @GetMapping("/listeEnchere/{tokenValues}")
-    public @ResponseBody Map<String, Object> listeEnchere(@PathVariable String tokenValues){
-        try{
+    public @ResponseBody Map<String, Object> listeEnchere(@PathVariable String tokenValues) {
+        try {
             isTokenExipered(tokenValues);
             Token t = tokenRepository.getToken(tokenValues);
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("data",v_enchereRepository.getAll(t.getIdUtilisateur()));
+            data.put("data", v_enchereRepository.getAll(t.getIdUtilisateur()));
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(new ErrorRetour(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
 

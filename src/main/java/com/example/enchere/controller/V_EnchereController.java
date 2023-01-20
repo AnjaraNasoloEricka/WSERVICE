@@ -15,23 +15,22 @@ import com.example.enchere.exeption.RessourceException;
 import com.example.enchere.repository.V_EnchereRepository;
 import com.example.enchere.retour.ErrorRetour;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/v_enchere")
 public class V_EnchereController {
-    
+
     @Autowired
     private V_EnchereRepository enchereRepository;
 
     @GetMapping("/listeEncheres")
-    public @ResponseBody Map<String, Object> getAllEnchere(){
-        try{
+    public @ResponseBody Map<String, Object> getAllEnchere() {
+        try {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("data", enchereRepository.findAll());
             return data;
-        }
-        catch(Exception e){
-            throw new RessourceException(new ErrorRetour("Veuillez vérifier les informations",HttpStatus.BAD_REQUEST.value()));
+        } catch (Exception e) {
+            throw new RessourceException(
+                    new ErrorRetour("Veuillez vérifier les informations", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }
