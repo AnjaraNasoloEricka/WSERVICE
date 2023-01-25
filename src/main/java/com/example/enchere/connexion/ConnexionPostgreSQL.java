@@ -12,7 +12,7 @@ public class ConnexionPostgreSQL {
     public Connection getConnect(){
         try{
             Class.forName("org.postgresql.Driver");
-            this.Connect = DriverManager.getConnection("jdbc:postgresql://containers-us-west-172.railway.app:7613/railway", "postgres", "5EtPU13yu4JLzOQKuIy5");
+            this.Connect = DriverManager.getConnection("jdbc:postgresql://containers-us-west-49.railway.app:5928/railway", "postgres", "XZbxYC54mG00XDWtAZYA");
         }
         catch(Exception e){
             e.printStackTrace();
